@@ -1,0 +1,19 @@
+#
+#
+#
+#
+
+mainmenu "LENTUX $LT_VERSION Configuration"
+
+menu "Sample"
+
+config LT_BLAG
+	string "Blag option"
+	default "no"
+
+config LT_BLAGER2
+	bool "Blag2 2 2 2"
+	default y
+
+endmenu
+
