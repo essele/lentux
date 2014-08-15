@@ -173,6 +173,30 @@ function add_template(vars, template)
 	end
 end
 
+--
+-- Dump the vars in a human readable form
+--
+function dump(vars)
+	for k, v in pairs(vars) do
+		if(type(v) == "table") then
+			for i,elem in ipairs(v) do
+				if(i == 1) then
+					print(k .. ": [ " .. elem .. " ]")
+				else
+					print(string.rep(" ",#k+1) .. " [ " .. elem .. " ]")
+				end
+			end
+		else
+			print(k .. ": " .. v)
+		end
+	end
+end
+
+
+
+
+
+
 if(not arg[1]) then usage() end
 
 --
@@ -207,3 +231,4 @@ validate_strings(pkg, { "source-archive", "name", "version" })
 
 print("source-archive=" .. pkg["source-archive"])
 
+dump(pkg)
