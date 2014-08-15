@@ -1,16 +1,9 @@
 #
 # Early stage makefile to make sure we have a luajit built for the host
-# so any lua based scripts can run in a consistent form
+# so any lua based scripts can run in a consistent form.
 #
-
+# The luajit binary will be installed in the support directory
 #
-# TODO: move these to a central place
-#
-#BASE_DIR=/home/essele/dev/embedded
-#DL_DIR=$(BASE_DIR)/dl
-#H_BUILD_DIR=$(BASE_DIR)/build/host
-#H_TARGET_DIR=$(BASE_DIR)/output/host
-
 LUAJIT_VER=2.0.3
 LUAJIT_SRC=http://luajit.org/download/LuaJIT-2.0.3.tar.gz
 LUAJIT_SRCNAME=LuaJIT-$(LUAJIT_VER).tar.gz
@@ -34,7 +27,6 @@ $(LUAJIT_SRCDIR)/.unpacked:	$(LUAJIT_SRCFILE)
 	tar -C $(BUILD_DIR_H) -zxf $(LUAJIT_SRCFILE)
 	touch $(LUAJIT_SRCDIR)/.unpacked
 
-
 #
 # Build the binaries...
 #
@@ -50,7 +42,6 @@ $(LUAJIT):	$(LUAJIT_SRCDIR)/src/luajit
 #
 # Standard syntax make targets for the package...
 #
-
 support/luajit:			$(LUAJIT)	
 support/luajit/clean:
 	rm -fr $(LUAJIT_SRCDIR)

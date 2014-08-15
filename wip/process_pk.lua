@@ -1,10 +1,57 @@
 #!./luajit
 
+--
+-- Given a simple .pk format file we process the file, do some rudimentary
+-- syntax and required-fields checking and expand variables.
+--
+-- We build a set of more complete variables (by combining others)
+--
+-- Then we produce a small makefile that does the right thing.
+--
+
+local required_fields = {
+	"name", "url", "version", "source-archive"
+}
+
+local string_fields = {
+	"name", "url", "version", "source-archive"
+}
+
+local template = {
+	["install-dir"] =	{ "$(BASE_DIR)/output/target" },
+	["configure"] = 	{ "configure --prefix=/usr" },
+	["make"] = 			{ "make" },
+	["install"] = 		{ "make DESTDIR=$[install-dir]" }
+}
+
+--
+-- Basic usage function
+--
 function usage()
 	print("Usage: " .. arg[0] .. " <package_file>")
 	os.exit(1)
 end
 
+--
+-- Simple table copy function
+--
+function table_copy(t)
+	local rc = {}
+
+	for k,v in pairs(t) do
+		if(type(v) == "table") then
+			rc[k] = table_copy(v)
+		else
+			rc[k] = v
+		end
+	end
+	return rc
+end
+
+
+--
+-- Read the pk file and create a table containing all the info
+--
 function read_pk(filename)
 	local f = io.open(filename)
 	local err
@@ -115,24 +162,48 @@ function validate_strings(vars, list)
 	return err
 end
 
+--
+-- Add any items that are in our template that we haven't overridden
+--
+function add_template(vars, template)
+	for k,v in pairs(template) do
+		if(not vars[k]) then
+			vars[k] = table_copy(template[k])
+		end
+	end
+end
 
 if(not arg[1]) then usage() end
 
+--
+-- Read the file and do basic processing...
+--
 pkg, err = read_pk(arg[1])
 if(not pkg) then
 	print(arg[0] .. ": " .. err)
 	os.exit(1)
 end
 
-print("source=" .. table.concat(pkg.source, "\n"))
+--
+-- Add in the template variables
+--
+add_template(pkg, template)
 
-var_expand(pkg, "source")
+--
+-- Make sure we now have all required fields
+--
+-- TODO
+
+
+print("source-archive=" .. table.concat(pkg["source-archive"], "\n"))
+
+var_expand(pkg, "source-archive")
 var_expand(pkg, "fred")
 print("--")
 
 print("fred=" .. table.concat(pkg.fred, "\n"))
 
-validate_strings(pkg, { "source", "name", "version" })
+validate_strings(pkg, { "source-archive", "name", "version" })
 
-print("source=" .. pkg.source)
+print("source-archive=" .. pkg["source-archive"])
 

@@ -1,25 +1,25 @@
 
-name:		binutils
-url:		http://ftp.gnu.org/gnu/binutils
-version:	2.24
+name:				binutils
+url:				http://ftp.gnu.org/gnu/binutils
+version:			2.24
 
-source:		$[name]-$[version].tar.gz
+source-archive:		$[name]-$[version].tar.gz
 
-depends:	first
-			second
-			third
+depends:			first
+					second
+					third
 
-configure:	./configure --prefix=$(install_prefix) \
-				carry on command line \
-				using backslash
-			new command
-			another command
+configure:			./configure --prefix=$(install_prefix) \
+						carry on command line \
+						using backslash
+					new command
+					another command
 
-build:		make
+build:				make
 
-install:	make install
+install:			make install
 
-fred:		hello @[depends] how are you
+fred:				hello @[depends] how are you
 
 
 
