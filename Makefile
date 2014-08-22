@@ -26,6 +26,8 @@ TARGETS =
 #include package/*.mk
 #include package/*/*.mk
 
+.PHONY: build-dirs
+
 #
 # Default target
 #
@@ -38,9 +40,29 @@ all:	support/luajit
 menuconfig:	$(MCONF)
 	@$(MCONF) Config.in
 
-
 #
 # Make sure we can get and build luajit
 #
 include include/luajit.mk
+
+#
+# Build all of the makefiles for our packages
+#
+PK_FILES=$(wildcard package/*.pk)
+PMK_FILES=$(foreach p,$(PK_FILES),build/makefiles/$(basename $(notdir $(p))).mk)
+
+-include $(PMK_FILES)
+
+$(PMK_FILES): build/makefiles/%.mk : package/%.pk
+	if [ ! -d $(@D) ]; then \
+		echo "Would create $(@D)"; \
+	fi
+	echo "Would run $< ($@)"
+
+
+lee: 
+	echo LEE
+
+
+
 

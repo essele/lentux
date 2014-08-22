@@ -27,7 +27,8 @@ local pre_expand_template = {
 	["source-archive"] =	{ "$[name]-$[version].tar.gz" },
 	["source-dir"] =		{ "$[name]-$[version]" },
 	["template"] =			{ "autotools" },
-	["template-file"] = 	{ "$[template].tmpl" }
+	["template-dir"] = 		{ "." },
+	["template-file"] = 	{ "$[template-dir]/$[template].tmpl" }
 }
 
 local unpackers = {
@@ -45,7 +46,7 @@ local post_expand_template = {
 -- Basic usage function
 --
 function usage()
-	print("Usage: " .. arg[0] .. " <package_file>")
+	print("Usage: " .. arg[0] .. " [-t <template_dir>] <package_file>")
 	os.exit(1)
 end
 
@@ -313,12 +314,24 @@ function read_file(filename, vars, key)
 end
 
 
-if(not arg[1]) then usage() end
+--
+-- Read the command line
+--
+local template_dir = "."
+local pkg_file
+if(#arg == 3 and arg[1] == "-t") then
+	template_dir = arg[2]
+	pkg_file = arg[3]
+elseif(#arg == 1) then
+	pkg_file = arg[1]
+else	
+	usage()
+end
 
 --
 -- Read the file and do basic processing...
 --
-pkg, err = read_pk(arg[1])
+pkg, err = read_pk(pkg_file)
 if(not pkg) then
 	print(arg[0] .. ": " .. err)
 	os.exit(1)
@@ -328,6 +341,11 @@ end
 -- Add in the template variables in the pre-expand stage
 --
 add_variables(pkg, pre_expand_template)
+
+--
+-- Add our template directory
+--
+pkg["template-dir"] = { template_dir }
 
 --
 -- Now we can expand any embedded variables
