@@ -1,3 +1,7 @@
+#
+#
+#
+#
 
 name:				binutils
 version:			2.24
@@ -10,7 +14,11 @@ depends:			first
 					second
 					third
 
-configure:			./configure --prefix=$(install_prefix) \
+#
+# Here we do blah
+#
+#
+configure:			./configure --prefix=$[install-prefix] \
 						carry on command line \
 						using backslash
 					new command
@@ -22,5 +30,16 @@ install:			make install
 
 fred:				hello @[depends] how are you
 
+<include>
+hello
+on the first
+line
 
+ok
+
+with gaps
+
+etc
+
+ok
 

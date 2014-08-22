@@ -1,0 +1,20 @@
+
+
+$(DL_DIR)/$[source-archive]:
+	wget -O $@ $[source-url]/$[source-archive]
+
+$(BUILD_DIR)/$[source-dir]/.unpacked: $(DL_DIR)/$[source-archive]
+	$[unpack-cmd]
+	touch $@
+
+$(BUILD_DIR)/$[source-dir]/.configured: $(BUILD_DIR)/.unpacked
+	cd $(BUILD_DIR)/$[source-dir] && \
+	@[configure]
+	touch $@
+
+$(BUILD_DIR)/$[source-dir]/.built: $(BUILD_DIR)/.configured
+	@[make]
+	touch $@
+
+@[include]
+
